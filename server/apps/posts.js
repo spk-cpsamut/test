@@ -1,12 +1,14 @@
 import { ObjectId } from "mongodb";
 import { Router } from "express";
 import { db } from "../utils/db.js";
+import { protect } from "../middlewares/protect.js";
 
 const postRouter = Router();
 
 // 🐨 Todo: Exercise #5
 // นำ Middleware `protect` มาใช้กับ `postRouter` ด้วย Function `app.use`
 
+postRouter.use(protect);
 postRouter.get("/", async (req, res) => {
   const status = req.query.status;
   const keywords = req.query.keywords;
@@ -53,6 +55,7 @@ postRouter.post("/", async (req, res) => {
   const hasPublished = req.body.status === "published";
   const newPost = {
     ...req.body,
+    user_id: ObjectId(req.user.id),
     created_at: new Date(),
     updated_at: new Date(),
     published_at: hasPublished ? new Date() : null,
